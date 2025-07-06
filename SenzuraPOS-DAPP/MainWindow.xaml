@@ -14,7 +14,7 @@
         <Border CornerRadius="12" Background="{DynamicResource MaterialDesignCardBackground}" Padding="0">
             <materialDesign:Card Padding="30">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Image Source="/Assets/ico.png" Width="80" Height="80" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+                    <Image Source="Assets/ico.png" Width="80" Height="80" Margin="0,0,0,20" HorizontalAlignment="Center"/>
 
                     <TextBlock Text="Welcome to BYTEBUY"
                            FontSize="30"

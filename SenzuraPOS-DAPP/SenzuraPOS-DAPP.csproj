@@ -13,4 +13,10 @@
     <PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Assets\ico.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
