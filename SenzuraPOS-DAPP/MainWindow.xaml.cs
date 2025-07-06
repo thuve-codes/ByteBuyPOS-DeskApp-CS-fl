@@ -16,14 +16,30 @@ namespace SenzuraPOS_DAPP
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private User _currentUser;
+
+        public MainWindow(User user)
         {
             InitializeComponent();
+            _currentUser = user;
         }
+
         private void StartBilling_Click(object sender, RoutedEventArgs e)
         {
-            BillingWindow billingWindow = new BillingWindow();
+            BillingWindow billingWindow = new BillingWindow(_currentUser);
             billingWindow.Show();
+        }
+
+        private void ViewReports_Click(object sender, RoutedEventArgs e)
+        {
+            ReportWindow reportWindow = new ReportWindow(_currentUser);
+            reportWindow.Show();
+        }
+
+        private void ManageInventory_Click(object sender, RoutedEventArgs e)
+        {
+            InventoryManagementWindow inventoryWindow = new InventoryManagementWindow();
+            inventoryWindow.Show();
         }
     }
 }

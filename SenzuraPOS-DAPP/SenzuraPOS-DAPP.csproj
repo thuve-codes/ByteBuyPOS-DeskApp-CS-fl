@@ -10,13 +10,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
+    <None Remove="Assets\ico.ico" />
+    <None Remove="Assets\ico.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Assets\ico.png">
+    <PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
+    <PackageReference Include="MySql.Data" Version="8.0.33" />
+    <PackageReference Include="PdfSharp" Version="1.50.5147" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\ico.ico" />
+    <Resource Include="Assets\ico.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
+    </Resource>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,106 @@
+<Window x:Class="SenzuraPOS_DAPP.InventoryManagementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SenzuraPOS_DAPP"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Inventory Management - BYTEBUY POS" Height="700" Width="900"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource MaterialDesignPaper}"
+        Icon="Assets/ico.ico">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Product Details Input -->
+        <materialDesign:Card Grid.Row="0" Margin="10" Padding="20">
+            <StackPanel>
+                <TextBlock Text="Product Details" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"
+                           Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="ProductIdTextBox" Grid.Row="0" Grid.Column="0" IsReadOnly="True"
+                             materialDesign:HintAssist.Hint="ID" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Margin="0,0,10,10"/>
+
+                    <TextBox x:Name="BrandTextBox" Grid.Row="1" Grid.Column="0"
+                             materialDesign:HintAssist.Hint="Brand" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Margin="0,0,10,10"/>
+
+                    <TextBox x:Name="NameTextBox" Grid.Row="2" Grid.Column="0"
+                             materialDesign:HintAssist.Hint="Name" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Margin="0,0,10,10"/>
+
+                    <TextBox x:Name="ModelNumberTextBox" Grid.Row="3" Grid.Column="0"
+                             materialDesign:HintAssist.Hint="Model Number" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Margin="0,0,10,10"/>
+
+                    <TextBox x:Name="PriceTextBox" Grid.Row="4" Grid.Column="0"
+                             materialDesign:HintAssist.Hint="Price" Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Margin="0,0,10,10"/>
+
+                    <TextBox x:Name="StockQuantityTextBox" Grid.Row="0" Grid.Column="1"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             materialDesign:HintAssist.Hint="Stock Quantity"
+                             Margin="10,0,0,10"/>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Button Content="Add Product" Margin="0,0,15,0" Click="AddProduct_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="{DynamicResource PrimaryHueMidBrush}"
+                            Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+                    <Button Content="Update Product" Margin="0,0,15,0" Click="UpdateProduct_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="{DynamicResource PrimaryHueMidBrush}"
+                            Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+                    <Button Content="Delete Product" Click="DeleteProduct_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="{DynamicResource SecondaryAccentBrush}"
+                            Foreground="{DynamicResource SecondaryAccentForegroundBrush}"/>
+                </StackPanel>
+            </StackPanel>
+        </materialDesign:Card>
+
+        <!-- Product List -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <materialDesign:Card Margin="10" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="Product List" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"
+                               HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <ListView x:Name="ProductListView" SelectionChanged="ProductListView_SelectionChanged"
+                              Style="{StaticResource MaterialDesignListView}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="50"/>
+                                <GridViewColumn Header="Brand" DisplayMemberBinding="{Binding Brand}" Width="100"/>
+                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="150"/>
+                                <GridViewColumn Header="Model Number" DisplayMemberBinding="{Binding ModelNumber}" Width="120"/>
+                                <GridViewColumn Header="Price" DisplayMemberBinding="{Binding Price, StringFormat='C'}" Width="80"/>
+                                <GridViewColumn Header="Stock" DisplayMemberBinding="{Binding StockQuantity}" Width="80"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+            </materialDesign:Card>
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -8,18 +8,30 @@ namespace SenzuraPOS_DAPP
     {
         public ObservableCollection<CartItem> Cart { get; set; } = new();
         public ObservableCollection<Product> Products { get; set; } = new();
+        private DatabaseHelper dbHelper;
+        private User _currentUser;
 
-        public BillingWindow()
+        public BillingWindow(User user)
         {
             InitializeComponent();
+            _currentUser = user;
 
-            // Sample electronics products with brand/model/stock
-            Products.Add(new Product { Brand = "Sony", Name = "4K TV", ModelNumber = "X900H", Price = 1200m, StockQuantity = 10 });
-            Products.Add(new Product { Brand = "Apple", Name = "iPhone", ModelNumber = "13 Pro", Price = 999m, StockQuantity = 15 });
-            Products.Add(new Product { Brand = "Dell", Name = "Laptop", ModelNumber = "XPS 15", Price = 1500m, StockQuantity = 8 });
+            string connectionString = "Server=localhost;Port=3306;Database=pos_db;Uid=root;Pwd=root;"; // Replace with your MySQL connection string
+            dbHelper = new DatabaseHelper(connectionString);
+
+            LoadProducts();
 
             ProductComboBox.ItemsSource = Products;
             CartListView.ItemsSource = Cart;
+        }
+
+        private void LoadProducts()
+        {
+            Products.Clear();
+            foreach (var product in dbHelper.GetProducts())
+            {
+                Products.Add(product);
+            }
         }
 
         private void AddToCart_Click(object sender, RoutedEventArgs e)
@@ -28,16 +40,24 @@ namespace SenzuraPOS_DAPP
                 int.TryParse(QuantityTextBox.Text, out int quantity) &&
                 quantity > 0)
             {
-                if (quantity > selectedProduct.StockQuantity)
+                // Fetch the latest stock quantity from the database
+                var latestProduct = dbHelper.GetProducts().FirstOrDefault(p => p.Id == selectedProduct.Id);
+                if (latestProduct == null)
                 {
-                    MessageBox.Show($"Only {selectedProduct.StockQuantity} units available in stock.", "Stock Limit", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Product not found in database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (quantity > latestProduct.StockQuantity)
+                {
+                    MessageBox.Show($"Only {latestProduct.StockQuantity} units available in stock.", "Stock Limit", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 var existingItem = Cart.FirstOrDefault(i => i.ModelNumber == selectedProduct.ModelNumber);
                 if (existingItem != null)
                 {
-                    if (existingItem.Quantity + quantity > selectedProduct.StockQuantity)
+                    if (existingItem.Quantity + quantity > latestProduct.StockQuantity)
                     {
                         MessageBox.Show($"Adding {quantity} exceeds available stock.", "Stock Limit", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
@@ -49,6 +69,7 @@ namespace SenzuraPOS_DAPP
                 {
                     Cart.Add(new CartItem
                     {
+                        Id = selectedProduct.Id,
                         Name = selectedProduct.Name,
                         Brand = selectedProduct.Brand,
                         ModelNumber = selectedProduct.ModelNumber,
@@ -84,31 +105,25 @@ namespace SenzuraPOS_DAPP
             // Deduct stock quantity after checkout
             foreach (var item in Cart)
             {
-                var product = Products.FirstOrDefault(p => p.ModelNumber == item.ModelNumber);
-                if (product != null)
-                    product.StockQuantity -= item.Quantity;
+                dbHelper.UpdateProductStock(item.Id, -item.Quantity);
+                dbHelper.InsertSale(item.Id, item.Quantity, item.Price, item.Total, _currentUser.Id);
             }
+
+            decimal totalAmount = Cart.Sum(item => item.Total);
+            PdfGenerator pdfGenerator = new PdfGenerator();
+            pdfGenerator.GenerateInvoice(Cart, totalAmount);
 
             MessageBox.Show($"Checkout complete! Total amount: {TotalAmountTextBlock.Text}", "Checkout", MessageBoxButton.OK, MessageBoxImage.Information);
 
             Cart.Clear();
             UpdateTotal();
+            LoadProducts(); // Reload products to reflect updated stock
         }
-    }
-
-    public class Product
-    {
-        public string Brand { get; set; }
-        public string Name { get; set; }
-        public string ModelNumber { get; set; }
-        public decimal Price { get; set; }
-        public int StockQuantity { get; set; }
-
-        public string DisplayName => $"{Brand} {Name} ({ModelNumber})";
     }
 
     public class CartItem
     {
+        public int Id { get; set; }
         public string Brand { get; set; }
         public string Name { get; set; }
         public string ModelNumber { get; set; }
